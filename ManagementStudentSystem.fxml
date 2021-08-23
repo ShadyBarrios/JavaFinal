@@ -379,7 +379,7 @@
             </HBox>
          </children>
       </VBox>
-      <VBox fx:id="editCourseVBOX" alignment="CENTER" layoutX="174.0" layoutY="119.0" prefHeight="200.0" prefWidth="244.0">
+      <VBox fx:id="editCourseVBOX" alignment="CENTER" layoutX="174.0" layoutY="119.0" prefHeight="200.0" prefWidth="244.0" visible="false">
          <children>
             <Label text="EDIT A COURSE" />
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
@@ -428,6 +428,79 @@
                   <Button fx:id="editCourseCancelButton" mnemonicParsing="false" onAction="#cancelButtonListener" text="Cancel" />
                </children>
             </HBox>
+         </children>
+      </VBox>
+      <VBox fx:id="displayCourseVBOX" alignment="CENTER" layoutX="163.0" layoutY="77.0" prefHeight="246.0" prefWidth="314.0" spacing="15.0">
+         <children>
+            <Label text="Course DETAILS">
+               <VBox.margin>
+                  <Insets right="25.0" />
+               </VBox.margin>
+            </Label>
+            <HBox prefHeight="100.0" prefWidth="200.0" spacing="67.0">
+               <children>
+                  <Label text="Course ID: " />
+                  <Label fx:id="displayCourseID" text="Course DETAILS" />
+               </children>
+               <VBox.margin>
+                  <Insets left="35.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox prefHeight="100.0" prefWidth="200.0" spacing="39.0">
+               <children>
+                  <Label text="Course Number:" />
+                  <Label fx:id="displayCourseNumber" text="Course DETAILS" />
+               </children>
+               <VBox.margin>
+                  <Insets left="35.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox prefHeight="100.0" prefWidth="200.0" spacing="49.0">
+               <children>
+                  <Label text="Course Name: " />
+                  <Label fx:id="displayCourseName" text="Course DETAILS" />
+               </children>
+               <VBox.margin>
+                  <Insets left="35.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox prefHeight="100.0" prefWidth="200.0" spacing="30.0">
+               <children>
+                  <Label text="Course Instructor: " />
+                  <Label fx:id="displayCourseInstructor" text="Course DETAILS" />
+               </children>
+               <VBox.margin>
+                  <Insets left="35.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox prefHeight="18.0" prefWidth="257.0" spacing="15.0">
+               <children>
+                  <Label prefHeight="18.0" prefWidth="112.0" text="Course Department: " />
+                  <Label fx:id="displayCourseDepartment" prefHeight="18.0" prefWidth="95.0" text="Course DETAILS" />
+               </children>
+               <VBox.margin>
+                  <Insets left="35.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
+               <children>
+                  <Button fx:id="displayCourseEditButton" mnemonicParsing="false" onAction="#displayCourseEditButtonListener" text="Edit" />
+               </children>
+               <VBox.margin>
+                  <Insets right="25.0" />
+               </VBox.margin>
+            </HBox>
+         </children>
+      </VBox>
+      <VBox fx:id="searchCourseVBOX" alignment="CENTER" layoutX="153.0" layoutY="101.0" prefHeight="200.0" prefWidth="306.0" visible="false">
+         <children>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+               <children>
+                  <Label text="Please enter the Course ID: " />
+                  <TextField fx:id="courseSearchID" />
+               </children>
+            </HBox>
+            <Button fx:id="courseSearchButton" mnemonicParsing="false" onAction="#courseSearchButtonListener" text="Course Search" />
          </children>
       </VBox>
    </children>

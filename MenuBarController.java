@@ -14,8 +14,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 
 public class MenuBarController{
-	private int SIDCounter = 0, CIDCounter = 0;
-	private int studentRecordNumberEditing = 0, courseRecordNumberEditing = 0;
+	public static int SIDCounter = 0, CIDCounter = 0;
+	public static int studentRecordNumberEditing = 0, courseRecordNumberEditing = 0;
 	@FXML
 	private MenuItem addStudentButton,addCourseButton,addEnrollmentButton;
 	@FXML
@@ -27,7 +27,7 @@ public class MenuBarController{
 	@FXML
 	private VBox addStudentVBOX, postAddStudentVBOX, editStudentVBOX, displayStudentVBOX, searchStudentVBOX, addCourseVBOX;
 	@FXML
-	private VBox postAddCourseVBOX, editCourseVBOX, displayCourseVBOX;
+	private VBox postAddCourseVBOX, editCourseVBOX, displayCourseVBOX, searchCourseVBOX;
 	@FXML
 	private TextField addStudentAddressTextField, addStudentFirstNameTextField, addStudentLastNameTextField, addStudentStateTextField, addStudentCityTextField;
 	@FXML
@@ -57,7 +57,9 @@ public class MenuBarController{
 	@FXML
 	private Label displayCourseID, displayCourseNumber, displayCourseName, displayCourseInstructor, displayCourseDepartment;
 	
-	private int searchStudentRequestedID, searchCourseRequestedID;
+	private int searchStudentRequestedID = 0, searchCourseRequestedID = 0;
+	
+	private boolean studentJustSearched = false;
 	
 	public void initialize() throws IOException{
 		LOG("Controller main");
@@ -84,49 +86,58 @@ public class MenuBarController{
 	
 	public void addStudentButtonListener() {
 		LOG("Add Student");
+		studentJustSearched = false;
 		makeAllInvisible();
 		addStudentVBOX.setVisible(true);
 	}
 	
 	public void addCourseButtonListener() {
 		LOG("Add Class");
+		studentJustSearched = false;
 		makeAllInvisible();
 		addCourseVBOX.setVisible(true);
 	}
 	
 	public void addEnrollmentButtonListener() {
 		LOG("Add Enrollment");
+		studentJustSearched = false;
 		MenuLabel.setText("Add Enrollment");
 	}
 	
 	public void searchStudentButtonListener() throws IOException {
 		LOG("Search Student");
+		studentJustSearched = false;
 		makeAllInvisible();
 		searchStudentVBOX.setVisible(true);
 	}
 	
 	public void searchCourseButtonListener() {
 		LOG("Search Class");
+		studentJustSearched = false;
 		MenuLabel.setText("Search Class");
 	}
 	
 	public void searchEnrollmentButtonListener() {
 		LOG("Search Enrollment");
+		studentJustSearched = false;
 		MenuLabel.setText("Search Enrollment");
 	}
 	
 	public void manageGradesButtonListener() {
 		LOG("Manage Grades");
+		studentJustSearched = false;
 		MenuLabel.setText("Manage Grades");
 	}
 	
 	public void reportButtonListener() {
 		LOG("Report");
+		studentJustSearched = false;
 		MenuLabel.setText("Report");
 	}
 	
 	public void cancelButtonListener() {
 		makeAllInvisible();
+		studentJustSearched = false;
 		MenuLabel.setVisible(true);
 		MenuLabel.setText("Menu");
 		wipeStudentFormInfo();
@@ -144,7 +155,6 @@ public class MenuBarController{
 		city = addStudentCityTextField.getText();
 		state = addStudentStateTextField.getText();
 		
-		
 		Student student = new Student(SIDCounter,firstName,lastName,address,city,state);
 		studentFile.writeStudentInfo(student);
 		wipeStudentFormInfo();
@@ -160,6 +170,7 @@ public class MenuBarController{
 			errorMessage("Invalid Search");
 		}
 		else {
+			studentJustSearched = true;
 			displaySearchedStudent(searchStudentRequestedID);
 		}
 	}
@@ -198,7 +209,6 @@ public class MenuBarController{
 		editStudentVBOX.setVisible(true);
 		studentRecordNumberEditing = SIDCounter;
 		Student student = studentFile.readSelectedStudent(studentRecordNumberEditing);
-		
 		editStudentFirstName.setText(student.getFirstName());
 		editStudentLastName.setText(student.getLastName());
 		editStudentAddress.setText(student.getAddress());
@@ -236,7 +246,13 @@ public class MenuBarController{
 	public void displayStudentEditButtonListener() throws IOException{
 		makeAllInvisible();
 		editStudentVBOX.setVisible(true);
-		studentRecordNumberEditing = searchStudentRequestedID;
+		if(searchStudentRequestedID == 0)
+			studentRecordNumberEditing = SIDCounter;
+		else if(!studentJustSearched)
+			studentRecordNumberEditing = SIDCounter;
+		else
+			studentRecordNumberEditing = searchStudentRequestedID;
+		
 		Student student = studentFile.readSelectedStudent(studentRecordNumberEditing);
 		
 		editStudentFirstName.setText(student.getFirstName());
@@ -332,6 +348,27 @@ public class MenuBarController{
 		displayCourseDepartment.setText(course.getDepartment());
 	}
 	
+	public void displayCourseEditButtonListener() throws IOException{
+		makeAllInvisible();
+		editCourseVBOX.setVisible(true);
+		
+		if(true)
+			courseRecordNumberEditing = CIDCounter;
+		else
+			courseRecordNumberEditing = searchCourseRequestedID;
+		
+		Course course = courseFile.readSelectedCourse(courseRecordNumberEditing);
+		
+		editCourseNumber.setText(course.getNum());
+		editCourseName.setText(course.getName());
+		editCourseInstructorChoiceBox.getItems().removeAll(addCourseInstructorChoiceBox.getItems());
+		editCourseInstructorChoiceBox.getItems().addAll("Kim", "Jones", "Java", "Pete", "Scott");
+		editCourseInstructorChoiceBox.setValue(course.getInstruct());
+		editCourseDepartmentChoiceBox.getItems().removeAll(addCourseDepartmentChoiceBox.getItems());
+		editCourseDepartmentChoiceBox.setValue(course.getDepartment());
+		editCourseDepartmentChoiceBox.getItems().addAll("English", "Science", "Biology", "Math", "Chemistry");
+	}
+	
 	private void makeAllInvisible() {
 		MenuLabel.setVisible(false);
 		addStudentVBOX.setVisible(false);
@@ -342,6 +379,8 @@ public class MenuBarController{
 		addCourseVBOX.setVisible(false);
 		postAddCourseVBOX.setVisible(false);
 		editCourseVBOX.setVisible(false);
+		searchCourseVBOX.setVisible(false);
+		displayCourseVBOX.setVisible(false);
 	}
 	
 	static long desiredRecordNumber;
@@ -519,7 +558,7 @@ class File{
 	public void moveFilePointer(long recordNum) throws IOException{
 		file.seek(getByteNum(recordNum));
 	}
-	
+
 	public void close() throws IOException{
 		file.close();
 	}
@@ -584,7 +623,31 @@ class StudentFile extends File{
 		super(fileName);
 	}
 	
+	public void moveFilePointerToEnd() throws IOException{
+		file.seek(getByteNum(MenuBarController.SIDCounter -1 ));
+	}
+	
+	public void writeStudentInfoSelected(Student student) throws IOException{
+		int id = student.getId();
+		String firstName = student.getFirstName();
+		String lastName = student.getLastName();
+		String address = student.getAddress();
+		String city = student.getCity();
+		String state = student.getState();
+		
+		WriteInt(id);
+		WriteString(firstName);
+		WriteString(lastName);
+		WriteString(address);
+		WriteString(city);
+		WriteString(state);
+		
+		this.reset();
+	}
+	
+	
 	public void writeStudentInfo(Student student) throws IOException{
+		moveFilePointerToEnd();
 		int id = student.getId();
 		String firstName = student.getFirstName();
 		String lastName = student.getLastName();
@@ -662,7 +725,7 @@ class CourseFile extends File{
 		super(fileName);
 	}
 	
-	public void writeCourseInfo(Course course) throws IOException{
+	public void writeCourseInfoSelected(Course course) throws IOException{
 		String num = course.getNum();
 		int id = course.getId();
 		String name = course.getName();
@@ -676,6 +739,27 @@ class CourseFile extends File{
 		WriteString(department);
 		
 		reset();
+	}
+	
+	public void writeCourseInfo(Course course) throws IOException{
+		this.moveFilePointerToEnd();
+		String num = course.getNum();
+		int id = course.getId();
+		String name = course.getName();
+		String instruct = course.getInstruct();
+		String department = course.getDepartment();
+		
+		WriteInt(id);
+		WriteString(num);
+		WriteString(name);
+		WriteString(instruct);
+		WriteString(department);
+		
+		reset();
+	}
+	
+	public void moveFilePointerToEnd() throws IOException{
+		file.seek(getByteNum(MenuBarController.CIDCounter - 1));
 	}
 	
 	public Course readCourseInfo() throws IOException{
@@ -707,7 +791,7 @@ class CourseFile extends File{
 	public void writeSelectedCourseInfo(Course course, long recordNumber) throws IOException{
 		recordNumber--;
 		this.moveFilePointer(recordNumber);
-		this.writeCourseInfo(course);
+		this.writeCourseInfoSelected(course);
 	}
 	
 	protected long getByteNum(long recordNum) {

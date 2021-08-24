@@ -430,7 +430,7 @@
             </HBox>
          </children>
       </VBox>
-      <VBox fx:id="displayCourseVBOX" alignment="CENTER" layoutX="163.0" layoutY="77.0" prefHeight="246.0" prefWidth="314.0" spacing="15.0">
+      <VBox fx:id="displayCourseVBOX" alignment="CENTER" layoutX="163.0" layoutY="77.0" prefHeight="246.0" prefWidth="314.0" spacing="15.0" visible="false">
          <children>
             <Label text="Course DETAILS">
                <VBox.margin>
@@ -503,5 +503,304 @@
             <Button fx:id="courseSearchButton" mnemonicParsing="false" onAction="#courseSearchButtonListener" text="Course Search" />
          </children>
       </VBox>
+      <VBox fx:id="searchStudentCreateEnrollmentVBOX" alignment="CENTER" layoutX="153.0" layoutY="101.0" prefHeight="200.0" prefWidth="306.0" visible="false">
+         <children>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Label text="Pleae enter the Student ID: " />
+                  <TextField fx:id="enrollmentStudentSearchID" />
+               </children>
+            </HBox>
+            <Button fx:id="enrollmentStudentSearchButton" mnemonicParsing="false" onAction="#createEnrollmentStudentSearchButtonListener" text="Student Search" />
+         </children>
+      </VBox>
+      <HBox fx:id="createEnrollmentHBOX" layoutX="84.0" layoutY="108.0" prefHeight="182.0" prefWidth="494.0" spacing="40.0" visible="false">
+         <children>
+            <VBox fx:id="createEnrollmentDisplayStudentVBOX" alignment="CENTER" prefHeight="246.0" prefWidth="244.0" spacing="15.0">
+               <children>
+                  <HBox prefHeight="100.0" prefWidth="200.0" spacing="15.0">
+                     <children>
+                        <Label text="Student ID: " />
+                        <Label fx:id="createEnrollmentDisplayStudentID" text="Student DETAILS" />
+                     </children>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox prefHeight="100.0" prefWidth="200.0" spacing="15.0">
+                     <children>
+                        <Label text="First Name: " />
+                        <Label fx:id="createEnrollmentDisplayStudentFirstName" text="Student DETAILS" />
+                     </children>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox prefHeight="100.0" prefWidth="200.0" spacing="15.0">
+                     <children>
+                        <Label text="Last Name: " />
+                        <Label fx:id="createEnrollmentDisplayStudentLastName" text="Student DETAILS" />
+                     </children>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox prefHeight="100.0" prefWidth="200.0" spacing="30.0">
+                     <children>
+                        <Label text="Address: " />
+                        <Label fx:id="createEnrollmentDisplayStudentAddress" text="Student DETAILS" />
+                     </children>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox prefHeight="100.0" prefWidth="200.0" spacing="52.0">
+                     <children>
+                        <Label text="City: " />
+                        <Label fx:id="createEnrollmentDisplayStudentCity" text="Student DETAILS" />
+                     </children>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox prefHeight="100.0" prefWidth="200.0" spacing="46.0">
+                     <children>
+                        <Label text="State: " />
+                        <Label fx:id="createEnrollmentDisplayStudentState" text="Student DETAILS" />
+                     </children>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </HBox>
+               </children>
+            </VBox>
+            <VBox fx:id="createEnrollmentCourseVBOX" alignment="CENTER" prefHeight="182.0" prefWidth="347.0" spacing="15.0">
+               <children>
+                  <Label alignment="CENTER" text="CREATE AN ENROLLMENT" />
+                  <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
+                     <children>
+                        <Label text="Course: " />
+                        <ChoiceBox fx:id="createEnrollmentCourseChoiceBox" prefHeight="26.0" prefWidth="113.0">
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin>
+                        </ChoiceBox>
+                     </children>
+                     <VBox.margin>
+                        <Insets left="30.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
+                     <children>
+                        <Label text="Year: " />
+                        <ChoiceBox fx:id="createEnrollmentYearChoiceBox" prefHeight="26.0" prefWidth="70.0">
+                           <HBox.margin>
+                              <Insets left="25.0" />
+                           </HBox.margin>
+                        </ChoiceBox>
+                     </children>
+                     <VBox.margin>
+                        <Insets left="30.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
+                     <children>
+                        <Label alignment="CENTER" text="Semester: " />
+                        <ChoiceBox fx:id="createEnrollmentSemesterChoiceBox" prefHeight="26.0" prefWidth="109.0" />
+                     </children>
+                     <VBox.margin>
+                        <Insets left="30.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
+                     <children>
+                        <Button fx:id="createEnrollmentCreateButton" mnemonicParsing="false" onAction="#createEnrollmentButtonListener" text="Create Enrollment" />
+                        <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelButtonListener" text="Cancel" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+      <VBox fx:id="postAddEnrollmentVBOX" alignment="CENTER" layoutX="163.0" layoutY="77.0" prefHeight="246.0" prefWidth="314.0" spacing="15.0" visible="false">
+         <children>
+            <Label text="Enrollment DETAILS">
+               <VBox.margin>
+                  <Insets right="25.0" />
+               </VBox.margin>
+            </Label>
+            <HBox prefHeight="100.0" prefWidth="200.0" spacing="30.0">
+               <children>
+                  <Label text="Enrollment ID: " />
+                  <Label fx:id="postAddEnrollmentEID" text="Enrollment DETAILS" />
+               </children>
+               <VBox.margin>
+                  <Insets left="35.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox prefHeight="18.0" prefWidth="284.0" spacing="55.0">
+               <children>
+                  <Label text="Course ID:" />
+                  <Label fx:id="postAddEnrollmentCID" text="Enrollment DETAILS" />
+               </children>
+               <VBox.margin>
+                  <Insets left="35.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox prefHeight="100.0" prefWidth="200.0" spacing="47.0">
+               <children>
+                  <Label text="Student ID: " />
+                  <Label fx:id="postAddEnrollmentSID" text="Enrollment DETAILS" />
+               </children>
+               <VBox.margin>
+                  <Insets left="35.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox prefHeight="100.0" prefWidth="200.0" spacing="80.0">
+               <children>
+                  <Label text="Year: " />
+                  <Label fx:id="postAddEnrollmentYear" text="Enrollment DETAILS" />
+               </children>
+               <VBox.margin>
+                  <Insets left="35.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox prefHeight="100.0" prefWidth="200.0" spacing="55.0">
+               <children>
+                  <Label text="Semester: " />
+                  <Label fx:id="postAddEnrollmentSemester" text="Enrollment DETAILS" />
+               </children>
+               <VBox.margin>
+                  <Insets left="35.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox prefHeight="18.0" prefWidth="257.0" spacing="67.0">
+               <children>
+                  <Label prefHeight="18.0" prefWidth="42.0" text="Grade: " />
+                  <Label fx:id="postAddEnrollmentGrade" prefHeight="18.0" prefWidth="109.0" text="Enrollment DETAILS" />
+               </children>
+               <VBox.margin>
+                  <Insets left="35.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="26.0" prefWidth="253.0" spacing="15.0">
+               <children>
+                  <Button fx:id="addNewEnrollmentButton" mnemonicParsing="false" onAction="#addEnrollmentButtonListener" text="Add New Enrollment" />
+                  <Button fx:id="postAddEnrollmentEditButton" mnemonicParsing="false" onAction="#poastAddEnrollmentEditButtonListener" text="Edit" />
+               </children>
+               <VBox.margin>
+                  <Insets right="25.0" />
+               </VBox.margin>
+            </HBox>
+         </children>
+      </VBox>
+      <HBox fx:id="editEnrollmentHBOX" layoutX="94.0" layoutY="118.0" prefHeight="182.0" prefWidth="494.0" spacing="40.0">
+         <children>
+            <VBox fx:id="editEnrollmentStudentVBOX" alignment="CENTER" prefHeight="246.0" prefWidth="244.0" spacing="15.0">
+               <children>
+                  <HBox prefHeight="100.0" prefWidth="200.0" spacing="15.0">
+                     <children>
+                        <Label text="Student ID: " />
+                        <Label fx:id="editEnrollmentDisplayStudentID" text="Student DETAILS" />
+                     </children>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox prefHeight="100.0" prefWidth="200.0" spacing="15.0">
+                     <children>
+                        <Label text="First Name: " />
+                        <Label fx:id="editEnrollmentDisplayStudentFirstName" text="Student DETAILS" />
+                     </children>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox prefHeight="100.0" prefWidth="200.0" spacing="15.0">
+                     <children>
+                        <Label text="Last Name: " />
+                        <Label fx:id="editEnrollmentDisplayStudentLastName" text="Student DETAILS" />
+                     </children>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox prefHeight="100.0" prefWidth="200.0" spacing="30.0">
+                     <children>
+                        <Label text="Address: " />
+                        <Label fx:id="editEnrollmentDisplayStudentAddress" text="Student DETAILS" />
+                     </children>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox prefHeight="100.0" prefWidth="200.0" spacing="52.0">
+                     <children>
+                        <Label text="City: " />
+                        <Label fx:id="editEnrollmentDisplayStudentCity" text="Student DETAILS" />
+                     </children>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox prefHeight="100.0" prefWidth="200.0" spacing="46.0">
+                     <children>
+                        <Label text="State: " />
+                        <Label fx:id="editEnrollmentDisplayStudentState" text="Student DETAILS" />
+                     </children>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </HBox>
+               </children>
+            </VBox>
+            <VBox fx:id="editEnrollmentCourseVBOX" alignment="CENTER" prefHeight="182.0" prefWidth="347.0" spacing="15.0">
+               <children>
+                  <Label alignment="CENTER" text="EDIT ENROLLMENT" />
+                  <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
+                     <children>
+                        <Label text="Course: " />
+                        <ChoiceBox fx:id="editEnrollmentCourseChoiceBox" prefHeight="26.0" prefWidth="113.0">
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin>
+                        </ChoiceBox>
+                     </children>
+                     <VBox.margin>
+                        <Insets left="30.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
+                     <children>
+                        <Label text="Year: " />
+                        <ChoiceBox fx:id="editEnrollmentYearChoiceBox" prefHeight="26.0" prefWidth="70.0">
+                           <HBox.margin>
+                              <Insets left="25.0" />
+                           </HBox.margin>
+                        </ChoiceBox>
+                     </children>
+                     <VBox.margin>
+                        <Insets left="30.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
+                     <children>
+                        <Label alignment="CENTER" text="Semester: " />
+                        <ChoiceBox fx:id="editEnrollmentSemesterChoiceBox" prefHeight="26.0" prefWidth="109.0" />
+                     </children>
+                     <VBox.margin>
+                        <Insets left="30.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
+                     <children>
+                        <Button fx:id="editEnrollmentSaveChangesButton" mnemonicParsing="false" onAction="#editEnrollmentSavesChangesButtonListener" text="Save Changes" />
+                        <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelButtonListener" text="Cancel" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
    </children>
 </AnchorPane>

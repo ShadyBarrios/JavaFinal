@@ -3,12 +3,15 @@ package application;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
@@ -81,10 +84,51 @@ public class MenuBarController{
 	private Label editEnrollmentDisplayStudentAddress, editEnrollmentDisplayStudentCity, editEnrollmentDisplayStudentState;
 	@FXML
 	private ChoiceBox<String> editEnrollmentCourseChoiceBox, editEnrollmentYearChoiceBox, editEnrollmentSemesterChoiceBox;
+	@FXML
+	private TextField searchEnrollmentStudentID;
+	@FXML
+	private ChoiceBox<String> searchEnrollmentYear;
+	@FXML
+	private ChoiceBox<String> searchEnrollmentSemester;
+	@FXML
+	private VBox displayEnrollmentVBOX;
+	@FXML
+	private VBox searchEnrollmentGradeManagementVBOX, gradeManagementEditVBOX, searchEnrollmentVBOX;
+	@FXML
+	private Label gradeManagementDisplayEID, gradeManagementDisplaySID, gradeManagementDisplayCID, gradeManagementDisplayYear;
+	@FXML
+	private Label gradeManagementDisplaySemester;
+	@FXML
+	private ChoiceBox<String> gradeManagementGradeChoiceBox;
+	@FXML
+	private TextField enrollmentSearchID;
+	@FXML
+	private Label displayEnrollmentEID, displayEnrollmentCID, displayEnrollmentSID, displayEnrollmentYear, displayEnrollmentSemester;
+	@FXML
+	private Label displayEnrollmentGrade;
+	@FXML
+	private TextField gradeManagementStudentID;
+	@FXML
+	private ChoiceBox<String> gradeManagementYear, gradeManagementSemester;
+	@FXML
+	private Label gradeManagementSaveIndicator;
+	@FXML
+	private ChoiceBox<String> searchReportCourseChoiceBox, searchReportYearChoiceBox;
+	@FXML
+	private Button reportSearchButton;
+	@FXML
+	private VBox searchReportVBOX;
+	@FXML
+	private ListView<String> listOfStudentInfo;
+	@FXML
+	private VBox displayReportVBOX;
 	
 	private int searchStudentRequestedID = 0, searchCourseRequestedID = 0, searchEnrollmentRequestedID = 0;
 	private int createEnrollmentRequestedStudentID = 0;
 	private boolean studentJustSearched = false, courseJustSearched = false, enrollmentJustSearched = false;
+	private boolean gradeManagementJustSearched = false;
+	private Enrollment searchedEnrollment;
+	private List<Integer> listOfReportEnrollmentIds;
 	
 	public void initialize() throws IOException{
 		LOG("Controller main");
@@ -96,6 +140,8 @@ public class MenuBarController{
 		
 		enrollmentFile = new EnrollmentFile("EnrollmentFile.dat");
 		enrollmentFile.truncate();
+		
+		setCounters();
 		
 		addCourseInstructorChoiceBox.getItems().removeAll(addCourseInstructorChoiceBox.getItems());
 		addCourseInstructorChoiceBox.getItems().addAll("Kim", "Jones", "Java", "Pete", "Scott");
@@ -109,10 +155,18 @@ public class MenuBarController{
 	private static void LOG(String str) {System.out.println(str);}
 	private static void LOG(int number) {System.out.println(number);}
 	
+	private void setCounters() throws IOException{
+		SIDCounter = (int)studentFile.getNumberOfRecords();
+		CIDCounter = (int)courseFile.getNumberOfRecords();
+		EIDCounter = (int)enrollmentFile.getNumberOfRecords();
+	}
+	
 	public void addStudentButtonListener() {
 		LOG("Add Student");
 		studentJustSearched = false;
 		courseJustSearched = false;
+		gradeManagementJustSearched = false;
+		enrollmentJustSearched = false;
 		makeAllInvisible();
 		addStudentVBOX.setVisible(true);
 	}
@@ -121,6 +175,8 @@ public class MenuBarController{
 		LOG("Add Class");
 		studentJustSearched = false;
 		courseJustSearched = false;
+		gradeManagementJustSearched = false;
+		enrollmentJustSearched = false;
 		makeAllInvisible();
 		addCourseVBOX.setVisible(true);
 	}
@@ -129,6 +185,8 @@ public class MenuBarController{
 		LOG("Add Enrollment");
 		studentJustSearched = false;
 		courseJustSearched = false;
+		gradeManagementJustSearched = false;
+		enrollmentJustSearched = false;
 		makeAllInvisible();
 		searchStudentCreateEnrollmentVBOX.setVisible(true);
 	}
@@ -137,6 +195,8 @@ public class MenuBarController{
 		LOG("Search Student");
 		studentJustSearched = false;
 		courseJustSearched = false;
+		gradeManagementJustSearched = false;
+		enrollmentJustSearched = false;
 		makeAllInvisible();
 		searchStudentVBOX.setVisible(true);
 	}
@@ -145,6 +205,8 @@ public class MenuBarController{
 		LOG("Search Class");
 		studentJustSearched = false;
 		courseJustSearched = false;
+		enrollmentJustSearched = false;
+		gradeManagementJustSearched = false;
 		MenuLabel.setText("Search Class");
 		makeAllInvisible();
 		searchCourseVBOX.setVisible(true);
@@ -154,26 +216,67 @@ public class MenuBarController{
 		LOG("Search Enrollment");
 		studentJustSearched = false;
 		courseJustSearched = false;
+		gradeManagementJustSearched = false;
+		enrollmentJustSearched = false;
 		MenuLabel.setText("Search Enrollment");
+		makeAllInvisible();
+		searchEnrollmentVBOX.setVisible(true);
 	}
 	
 	public void manageGradesButtonListener() {
 		LOG("Manage Grades");
 		studentJustSearched = false;
+		gradeManagementJustSearched = false;
 		courseJustSearched = false;
+		enrollmentJustSearched = false;
 		MenuLabel.setText("Manage Grades");
+		makeAllInvisible();
+		searchEnrollmentGradeManagementVBOX.setVisible(true);
+		if(EIDCounter == 0)
+			errorMessage("No enrollments have been made");
+		else {
+			gradeManagementYear.getItems().removeAll(gradeManagementYear.getItems());
+			gradeManagementYear.getItems().addAll("2019", "2020", "2021", "2022");
+			gradeManagementSemester.getItems().removeAll(createEnrollmentSemesterChoiceBox.getItems());
+			gradeManagementSemester.getItems().addAll("Spring", "Summer", "Fall", "Winter");
+		}
 	}
 	
-	public void reportButtonListener() {
+	public void reportButtonListener() throws IOException{
 		LOG("Report");
 		studentJustSearched = false;
+		gradeManagementJustSearched = false;
 		courseJustSearched = false;
+		enrollmentJustSearched = false;
 		MenuLabel.setText("Report");
+		if(EIDCounter == 0) {
+			errorMessage("No enrollments have been made");
+		}
+		else {
+			makeAllInvisible();
+			searchReportVBOX.setVisible(true);
+			searchReportCourseChoiceBox.getItems().removeAll(searchReportCourseChoiceBox.getItems());
+			
+			long numberOfCourses = courseFile.getNumberOfRecords();
+			
+			for(long i = 1; i <= numberOfCourses; i++) {
+				int id = courseFile.readSelectedCourse(i).getId();
+				String num = courseFile.readSelectedCourse(i).getNum();
+				String option = String.valueOf(id) + "   " + num;
+				
+				searchReportCourseChoiceBox.getItems().add(option);
+			}
+			searchReportYearChoiceBox.getItems().addAll("2019","2020","2021","2022");
+		}
+		
 	}
 	
 	public void cancelButtonListener() {
 		makeAllInvisible();
 		studentJustSearched = false;
+		courseJustSearched = false;
+		gradeManagementJustSearched = false;
+		enrollmentJustSearched = false;
 		MenuLabel.setVisible(true);
 		MenuLabel.setText("Menu");
 		wipeStudentFormInfo();
@@ -468,7 +571,12 @@ public class MenuBarController{
 		String semester = createEnrollmentSemesterChoiceBox.getValue();
 		String year = createEnrollmentYearChoiceBox.getValue();
 		
+		System.out.println("Course: " + courseID + ", Student: " + studentID);
+		
 		Enrollment enrollment = new Enrollment(enrollmentID, courseID, studentID, year, semester);
+		
+		System.out.println("Course: " + enrollment.getCourseId() + ", Student: " + enrollment.getStudentId());
+		
 		enrollmentFile.writeEnrollmentInfo(enrollment);
 		postAddEnrollment();
 	}
@@ -478,8 +586,10 @@ public class MenuBarController{
 		postAddEnrollmentVBOX.setVisible(true);
 		
 		Enrollment enrollment = enrollmentFile.readSelectedEnrollment(EIDCounter);
+		System.out.println("Course: " + enrollment.getCourseId() + ", Enrollment Course: " + String.valueOf(enrollment.getCourseId()));
 		postAddEnrollmentEID.setText(String.valueOf(enrollment.getEnrollmentId()));
 		postAddEnrollmentCID.setText(String.valueOf(enrollment.getCourseId()));
+		System.out.println("Displayed: " + displayEnrollmentCID.getText());
 		postAddEnrollmentSID.setText(String.valueOf(enrollment.getStudentId()));
 		postAddEnrollmentYear.setText(enrollment.getYear());
 		postAddEnrollmentSemester.setText(enrollment.getSemester());
@@ -512,6 +622,198 @@ public class MenuBarController{
 		setUpEditForEnrollmentCourse(enrollment.getCourseId());
 	}
 	
+	public void gradeManagementSearchButtonListener() throws IOException{
+		String studentID = gradeManagementStudentID.getText();
+		String year = gradeManagementYear.getValue();
+		String semester = gradeManagementSemester.getValue();
+		
+		if(EIDCounter == 0) {
+			errorMessage("No enrollments created");
+			return;
+		}
+		
+		if(findEnrollment(studentID, year, semester)) {
+			gradeManagementJustSearched = true;
+			displaySearchedStudentGM();
+		}
+		else {
+			errorMessage("Invalid search");
+		}
+	}
+	
+	private void displaySearchedStudentGM() throws IOException{
+		makeAllInvisible();
+		gradeManagementEditVBOX.setVisible(true);
+		Enrollment enrollment = searchedEnrollment;
+		gradeManagementDisplayEID.setText(String.valueOf(enrollment.getEnrollmentId()));
+		gradeManagementDisplayCID.setText(String.valueOf(enrollment.getCourseId()));
+		gradeManagementDisplaySID.setText(String.valueOf(enrollment.getStudentId()));
+		gradeManagementDisplayYear.setText(enrollment.getYear());
+		gradeManagementDisplaySemester.setText(enrollment.getSemester());
+		gradeManagementGradeChoiceBox.getItems().removeAll(gradeManagementGradeChoiceBox.getItems());
+		gradeManagementGradeChoiceBox.getItems().addAll("A", "B", "C", "D", "F");
+		gradeManagementGradeChoiceBox.setValue(enrollment.getGrade());
+	}
+	
+	private boolean findEnrollment(String SID, String year, String semester) throws IOException{
+		boolean enrollmentFound = true;
+		
+		for(int i = 1; i <= EIDCounter; i++) {
+			Enrollment dummy = enrollmentFile.readSelectedEnrollment(i);
+			System.out.println(Integer.valueOf(SID) + " " + dummy.getStudentId());
+			System.out.println(year + " " + dummy.getYear());
+			System.out.println(semester + " " + dummy.getSemester());
+			
+			if(Integer.valueOf(SID) == dummy.getStudentId()) {
+				if(year.equalsIgnoreCase(dummy.getYear().trim())){
+					if(semester.equalsIgnoreCase(dummy.getSemester().trim())) {
+						enrollmentFound = true;
+						searchedEnrollment = dummy;
+						break;
+					}
+					else {
+						System.out.println("No semester");
+						enrollmentFound = false;
+					}
+				}
+				else {
+					System.out.println("No year");
+					enrollmentFound = false;
+				}
+			}
+			else {
+				System.out.println("No SID");
+				enrollmentFound = false;
+			}
+		}
+		return enrollmentFound;
+	}
+	
+	private boolean findEnrollment(String course, String year) throws IOException{
+		boolean enrollmentFound = true;
+		
+		for(int i = 1; i <= EIDCounter; i++) {
+			Enrollment dummy = enrollmentFile.readSelectedEnrollment(i);
+			System.out.println(year + " " + dummy.getYear());
+			System.out.println(course + " " + dummy.getCourseId());
+			
+			if(year.equalsIgnoreCase(dummy.getYear().trim())){
+				if(Integer.valueOf(course) == dummy.getCourseId()) {
+					enrollmentFound = true;
+					searchedEnrollment = dummy;
+					break;
+				}
+				else {
+					System.out.println("No semester");
+					enrollmentFound = false;
+				}
+			}
+			else {
+				System.out.println("No year");
+				enrollmentFound = false;
+			}
+		}
+	
+		return enrollmentFound;
+	}
+	
+	private List<Integer> findEnrollmentIDs(String course, String year) throws IOException{
+		List<Integer> ids = new ArrayList<Integer>();
+		
+		for(int i = 1; i <= EIDCounter; i++) {
+			Enrollment dummy = enrollmentFile.readSelectedEnrollment(i);
+			
+			if(Integer.valueOf(course) == dummy.getCourseId()) {
+				if(year.equalsIgnoreCase(dummy.getYear().trim())) {
+					ids.add(dummy.getEnrollmentId());
+				}
+			}
+		}
+		
+		return ids;
+	}
+	
+	public void gradeManagementSaveChangesButtonListener() throws IOException{
+		int enrollmentID = Integer.valueOf(gradeManagementDisplayEID.getText());
+		Enrollment enrollment = enrollmentFile.readSelectedEnrollment(enrollmentID);
+		enrollment.setGrade(gradeManagementGradeChoiceBox.getValue());
+		enrollmentFile.writeSelectedEnrollmentInfo(enrollment, enrollmentID);
+		gradeManagementSaveIndicator.setText("Grade Saved: " + enrollmentFile.readSelectedEnrollment(enrollmentID).getGrade());
+	}
+	
+	public void editEnrollmentSaveChangesButtonListener() throws IOException{
+		int courseID = extractID(editEnrollmentCourseChoiceBox.getValue());
+		int studentID = Integer.valueOf(editEnrollmentDisplayStudentID.getText());
+		int enrollmentID = enrollmentRecordNumberEditing;
+		String semester = editEnrollmentSemesterChoiceBox.getValue();
+		String year = editEnrollmentYearChoiceBox.getValue();
+		
+		Enrollment enrollment = new Enrollment(enrollmentID, courseID, studentID, year, semester);
+		System.out.println("Sem: " + semester + " or " + enrollment.getSemester() + ", year: " + year + " or " + enrollment.getYear());
+		System.out.println("Editing: " + enrollmentRecordNumberEditing);
+		enrollmentFile.writeSelectedEnrollmentInfo(enrollment, enrollmentRecordNumberEditing);
+		displaySearchedEnrollment(enrollmentRecordNumberEditing);
+	}
+	
+	public void displayEnrollmentEditButtonListener() throws IOException{
+		makeAllInvisible();
+		editEnrollmentHBOX.setVisible(true);
+		
+		if(searchEnrollmentRequestedID == 0)
+			enrollmentRecordNumberEditing = EIDCounter;
+		else if(!enrollmentJustSearched)
+			enrollmentRecordNumberEditing = EIDCounter;
+		else
+			enrollmentRecordNumberEditing = searchEnrollmentRequestedID;
+		
+		Enrollment enrollment = enrollmentFile.readSelectedEnrollment(enrollmentRecordNumberEditing);
+		Student student = studentFile.readSelectedStudent(enrollment.getStudentId());
+		
+		editEnrollmentDisplayStudentID.setText(String.valueOf(student.getId()));
+		editEnrollmentDisplayStudentFirstName.setText(student.getFirstName());
+		editEnrollmentDisplayStudentLastName.setText(student.getLastName());
+		editEnrollmentDisplayStudentAddress.setText(student.getAddress());
+		editEnrollmentDisplayStudentCity.setText(student.getCity());
+		editEnrollmentDisplayStudentState.setText(student.getState());
+		
+		editEnrollmentYearChoiceBox.getItems().removeAll(createEnrollmentYearChoiceBox.getItems());
+		editEnrollmentYearChoiceBox.getItems().addAll("2019", "2020", "2021", "2022");
+		editEnrollmentYearChoiceBox.setValue(enrollment.getYear());
+		editEnrollmentSemesterChoiceBox.getItems().removeAll(createEnrollmentSemesterChoiceBox.getItems());
+		editEnrollmentSemesterChoiceBox.getItems().addAll("Spring", "Summer", "Fall", "Winter");
+		editEnrollmentSemesterChoiceBox.setValue(enrollment.getSemester());
+		setUpEditForEnrollmentCourse(enrollment.getCourseId());
+	}
+	
+	private void displaySearchedEnrollment(int recordNumber) throws IOException{
+		System.out.println("Record number: " + recordNumber);
+		Enrollment enrollment = enrollmentFile.readSelectedEnrollment(recordNumber);
+		System.out.println(enrollment.getSemester() + enrollment.getYear());
+		makeAllInvisible();
+		displayEnrollmentVBOX.setVisible(true);
+		
+		displayEnrollmentEID.setText(String.valueOf(enrollment.getEnrollmentId()));
+		displayEnrollmentCID.setText(String.valueOf(enrollment.getCourseId()));
+		displayEnrollmentSID.setText(String.valueOf(enrollment.getStudentId()));
+		displayEnrollmentYear.setText(enrollment.getYear());
+		displayEnrollmentSemester.setText(enrollment.getSemester());
+		displayEnrollmentGrade.setText(enrollment.getGrade());
+		
+	}
+	
+	public void enrollmentSearchButtonListener() throws IOException{
+		searchEnrollmentRequestedID = Integer.valueOf(enrollmentSearchID.getText());
+		System.out.println("Requested ID: " + searchEnrollmentRequestedID);
+		if(EIDCounter == 0)
+			errorMessage("No enrollments have been created");
+		else if(searchEnrollmentRequestedID < 1 || searchEnrollmentRequestedID > EIDCounter)
+			errorMessage("Invalid search");
+		else {
+			enrollmentJustSearched = true;
+			displaySearchedEnrollment(searchEnrollmentRequestedID);
+		}
+	}
+	
 	private void setUpEditForEnrollmentCourse(int courseID) throws IOException{
 		editEnrollmentCourseChoiceBox.getItems().removeAll(editEnrollmentCourseChoiceBox.getItems());
 		
@@ -529,6 +831,32 @@ public class MenuBarController{
 		String option = String.valueOf(courseID) + "   " + num;
 		editEnrollmentCourseChoiceBox.setValue(option);
 	}
+	////////
+	// report
+	public void reportSearchButtonListener() throws IOException{
+		makeAllInvisible();
+		displayReportVBOX.setVisible(true);
+		listOfStudentInfo.getItems().removeAll(listOfStudentInfo.getItems());
+		if(!findEnrollment(searchReportCourseChoiceBox.getValue(), searchReportYearChoiceBox.getValue())) {
+			listOfReportEnrollmentIds = findEnrollmentIDs(searchReportCourseChoiceBox.getValue(), searchReportYearChoiceBox.getValue());
+			if(listOfReportEnrollmentIds.isEmpty()) {
+				errorMessage("Invalid Search");
+				return;
+			}
+			for(int EID : listOfReportEnrollmentIds) {
+				Enrollment enrollment = enrollmentFile.readSelectedEnrollment(EID);
+				Student student = studentFile.readSelectedStudent(enrollment.getStudentId());
+				String str;
+				str = "Student ID: " + student.getId() + ", Student Name: " + student.getFirstName().trim() + ", Grade: " + enrollment.getGrade();
+				listOfStudentInfo.getItems().add(str);
+			}
+			
+		}
+		else {
+			errorMessage("There are no enrollments with those details.");
+		}
+	}
+	
 	private int extractID(String string) {
 		String str = "";
 		for(int i = 0; i < string.length(); i++) {
@@ -555,6 +883,12 @@ public class MenuBarController{
 		searchStudentCreateEnrollmentVBOX.setVisible(false);
 		createEnrollmentHBOX.setVisible(false);
 		postAddEnrollmentVBOX.setVisible(false);
+		editEnrollmentHBOX.setVisible(false);
+		searchEnrollmentGradeManagementVBOX.setVisible(false);
+		displayEnrollmentVBOX.setVisible(false);
+		gradeManagementEditVBOX.setVisible(false);
+		searchEnrollmentVBOX.setVisible(false);
+		displayReportVBOX.setVisible(false);
 	}
 	
 	static long desiredRecordNumber;
@@ -1020,8 +1354,8 @@ class EnrollmentFile extends File{
 	
 	public Enrollment readEnrollmentInfo() throws IOException{
 		int enrollmentId = this.file.readInt();
-		int studentId = this.file.readInt();
 		int courseId = this.file.readInt();
+		int studentId = this.file.readInt();
 		String year = ReadString();
 		String semester = ReadString();
 		String grade = ReadString();
@@ -1029,10 +1363,10 @@ class EnrollmentFile extends File{
 		return new Enrollment(enrollmentId, courseId, studentId,year,semester,grade);
 	}
 	
-	public Enrollment writeSelectedEnrollment(Enrollment enrollment, long recordNumber) throws IOException{
+	public void writeSelectedEnrollmentInfo(Enrollment enrollment, long recordNumber) throws IOException{
 		recordNumber--;
 		this.moveFilePointer(recordNumber);
-		return this.readEnrollmentInfo();
+		this.writeEnrollmentInfo(enrollment);
 	}
 	
 	public Enrollment readSelectedEnrollment(long recordNumber) throws IOException{

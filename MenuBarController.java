@@ -119,7 +119,7 @@ public class MenuBarController{
 	@FXML
 	private VBox searchReportVBOX;
 	@FXML
-	private ListView<String> listOfStudentInfo;
+	private ListView<String> listOfStudentInfo = new ListView<String>();
 	@FXML
 	private VBox displayReportVBOX;
 	
@@ -142,6 +142,8 @@ public class MenuBarController{
 		enrollmentFile.truncate();
 		
 		setCounters();
+		
+		listOfStudentInfo.getItems();
 		
 		addCourseInstructorChoiceBox.getItems().removeAll(addCourseInstructorChoiceBox.getItems());
 		addCourseInstructorChoiceBox.getItems().addAll("Kim", "Jones", "Java", "Pete", "Scott");
@@ -653,6 +655,7 @@ public class MenuBarController{
 		gradeManagementGradeChoiceBox.getItems().removeAll(gradeManagementGradeChoiceBox.getItems());
 		gradeManagementGradeChoiceBox.getItems().addAll("A", "B", "C", "D", "F");
 		gradeManagementGradeChoiceBox.setValue(enrollment.getGrade());
+		gradeManagementSaveIndicator.setText("");
 	}
 	
 	private boolean findEnrollment(String SID, String year, String semester) throws IOException{
@@ -689,16 +692,14 @@ public class MenuBarController{
 		return enrollmentFound;
 	}
 	
-	private boolean findEnrollment(String course, String year) throws IOException{
+	private boolean findEnrollment(int course, String year) throws IOException{
 		boolean enrollmentFound = true;
 		
 		for(int i = 1; i <= EIDCounter; i++) {
 			Enrollment dummy = enrollmentFile.readSelectedEnrollment(i);
-			System.out.println(year + " " + dummy.getYear());
-			System.out.println(course + " " + dummy.getCourseId());
 			
 			if(year.equalsIgnoreCase(dummy.getYear().trim())){
-				if(Integer.valueOf(course) == dummy.getCourseId()) {
+				if(course == dummy.getCourseId()) {
 					enrollmentFound = true;
 					searchedEnrollment = dummy;
 					break;
@@ -717,13 +718,13 @@ public class MenuBarController{
 		return enrollmentFound;
 	}
 	
-	private List<Integer> findEnrollmentIDs(String course, String year) throws IOException{
+	private List<Integer> findEnrollmentIDs(int course, String year) throws IOException{
 		List<Integer> ids = new ArrayList<Integer>();
 		
 		for(int i = 1; i <= EIDCounter; i++) {
 			Enrollment dummy = enrollmentFile.readSelectedEnrollment(i);
 			
-			if(Integer.valueOf(course) == dummy.getCourseId()) {
+			if(course == dummy.getCourseId()) {
 				if(year.equalsIgnoreCase(dummy.getYear().trim())) {
 					ids.add(dummy.getEnrollmentId());
 				}
@@ -749,8 +750,7 @@ public class MenuBarController{
 		String year = editEnrollmentYearChoiceBox.getValue();
 		
 		Enrollment enrollment = new Enrollment(enrollmentID, courseID, studentID, year, semester);
-		System.out.println("Sem: " + semester + " or " + enrollment.getSemester() + ", year: " + year + " or " + enrollment.getYear());
-		System.out.println("Editing: " + enrollmentRecordNumberEditing);
+		
 		enrollmentFile.writeSelectedEnrollmentInfo(enrollment, enrollmentRecordNumberEditing);
 		displaySearchedEnrollment(enrollmentRecordNumberEditing);
 	}
@@ -837,8 +837,8 @@ public class MenuBarController{
 		makeAllInvisible();
 		displayReportVBOX.setVisible(true);
 		listOfStudentInfo.getItems().removeAll(listOfStudentInfo.getItems());
-		if(!findEnrollment(searchReportCourseChoiceBox.getValue(), searchReportYearChoiceBox.getValue())) {
-			listOfReportEnrollmentIds = findEnrollmentIDs(searchReportCourseChoiceBox.getValue(), searchReportYearChoiceBox.getValue());
+		if(findEnrollment(extractID(searchReportCourseChoiceBox.getValue()), searchReportYearChoiceBox.getValue())) {
+			listOfReportEnrollmentIds = findEnrollmentIDs(extractID(searchReportCourseChoiceBox.getValue()), searchReportYearChoiceBox.getValue());
 			if(listOfReportEnrollmentIds.isEmpty()) {
 				errorMessage("Invalid Search");
 				return;
@@ -889,6 +889,7 @@ public class MenuBarController{
 		gradeManagementEditVBOX.setVisible(false);
 		searchEnrollmentVBOX.setVisible(false);
 		displayReportVBOX.setVisible(false);
+		searchReportVBOX.setVisible(false);
 	}
 	
 	static long desiredRecordNumber;

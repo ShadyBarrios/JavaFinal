@@ -268,6 +268,7 @@ public class MenuBarController{
 				
 				searchReportCourseChoiceBox.getItems().add(option);
 			}
+			searchReportYearChoiceBox.getItems().removeAll(searchReportYearChoiceBox.getItems());
 			searchReportYearChoiceBox.getItems().addAll("2019","2020","2021","2022");
 		}
 		
@@ -366,11 +367,15 @@ public class MenuBarController{
 		
 		Student student = new Student(studentRecordNumberEditing, firstName, lastName, address,city,state);
 		
+		System.out.println(studentRecordNumberEditing);
+		System.out.println(student.getState() + student.getId());
 		studentFile.writeSelectedStudent(student, studentRecordNumberEditing);
+		studentFile.reset();
 		displaySearchedStudent(studentRecordNumberEditing);
 	}
 	
 	private void displaySearchedStudent(int recordNumber) throws IOException{
+		System.out.println(recordNumber);
 		Student student = studentFile.readSelectedStudent(recordNumber);
 		
 		makeAllInvisible();
@@ -387,12 +392,17 @@ public class MenuBarController{
 	public void displayStudentEditButtonListener() throws IOException{
 		makeAllInvisible();
 		editStudentVBOX.setVisible(true);
+
+		System.out.println(studentJustSearched + " " + studentRecordNumberEditing + " " + searchStudentRequestedID);
+		
 		if(searchStudentRequestedID == 0)
 			studentRecordNumberEditing = SIDCounter;
-		else if(!studentJustSearched)
+		else if(studentJustSearched == false)
 			studentRecordNumberEditing = SIDCounter;
 		else 
 			studentRecordNumberEditing = searchStudentRequestedID;
+		
+		System.out.println(studentJustSearched + " " + studentRecordNumberEditing + " " + searchStudentRequestedID);
 		
 		Student student = studentFile.readSelectedStudent(studentRecordNumberEditing);
 		
@@ -1164,7 +1174,6 @@ class StudentFile extends File{
 	
 	
 	public void writeStudentInfo(Student student) throws IOException{
-		moveFilePointerToEnd();
 		int id = student.getId();
 		String firstName = student.getFirstName();
 		String lastName = student.getLastName();
@@ -1259,7 +1268,6 @@ class CourseFile extends File{
 	}
 	
 	public void writeCourseInfo(Course course) throws IOException{
-		this.moveFilePointerToEnd();
 		String num = course.getNum();
 		int id = course.getId();
 		String name = course.getName();
@@ -1337,8 +1345,9 @@ class EnrollmentFile extends File{
 	
 	public void writeEnrollmentInfo(Enrollment enrollment) throws IOException{
 		int enrollmentId = enrollment.getEnrollmentId();
-		int studentId = enrollment.getStudentId();
 		int courseId = enrollment.getCourseId();
+		int studentId = enrollment.getStudentId();
+		
 		String year = enrollment.getYear();
 		String semester = enrollment.getSemester();
 		String grade = enrollment.getGrade();
@@ -1357,6 +1366,8 @@ class EnrollmentFile extends File{
 		int enrollmentId = this.file.readInt();
 		int courseId = this.file.readInt();
 		int studentId = this.file.readInt();
+		
+		
 		String year = ReadString();
 		String semester = ReadString();
 		String grade = ReadString();
@@ -1396,4 +1407,3 @@ class EnrollmentFile extends File{
 		this.reopen(fileName);
 	}
 }
-
